@@ -1,0 +1,28 @@
+services:
+  steam:
+    image: steam
+    build:
+      dockerfile: steam.dockerfile
+    environment:
+      - TZ=America/Chicago
+      - PIPEWIRE_REMOTE=/run/user/1000/pipewire-0
+      - PULSE_SERVER=unix:/run/user/1000/pulse/native
+      - WAYLAND_DISPLAY=wayland-0
+      - XDG_RUNTIME_DIR=/run/user/1000
+    volumes:
+      - ./wayland-socket:/run/user/1000/wayland-0
+      - ./pipewire-socket:/run/user/1000/pipewire-0
+      - ./pulse:/run/user/1000/pulse
+      - steam-home:/home/ubuntu
+    devices:
+      - /dev/dri:/dev/dri
+    security_opt:
+      - seccomp:seccomp-steam.json
+    shm_size: 1g # 512m probably ok too but cuts it close
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
+
+volumes:
+  steam-home:
+    driver: local
